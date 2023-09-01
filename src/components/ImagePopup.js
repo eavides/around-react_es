@@ -1,9 +1,10 @@
 import React from "react";
 import cerrar from "../images/Close.png";
 
-function ImagePopup({ title, link, onClose }) {
+function ImagePopup({ title, link, key, isOpen, onClose }) {
+  //console.log(isOpen);
   return (
-    <div className="imgdisplay">
+    <div className={`imgdisplay ${isOpen}`}>
       <div className="imgdisplay__container">
         <div className="imgdisplay__container-card">
           <a href="#" className="imgdisplay__container-button">
@@ -11,6 +12,7 @@ function ImagePopup({ title, link, onClose }) {
               alt="cerrar"
               className="imgdisplay__container-buttonimg"
               src={cerrar}
+              onClick={onClose}
             />
           </a>
           <img

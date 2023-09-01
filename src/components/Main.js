@@ -82,6 +82,8 @@ function Main({
                 title={item.name}
                 image={item.link}
                 count={item.likes.length || 0}
+                id={item._id}
+                onCardC={onCardClick}
               ></Cards>
             );
           })}
