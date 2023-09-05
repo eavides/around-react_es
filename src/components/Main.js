@@ -3,7 +3,7 @@ import add from "../images/AddButton.svg";
 import imgEdit from "../images/iconed.png";
 import React, { useEffect } from "react";
 import api from "../utils/api.js";
-import Cards from "./Cards";
+import Cards from "./Card";
 
 function Main({
   onEditProfileClick,
