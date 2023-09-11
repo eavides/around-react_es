@@ -1,20 +1,19 @@
 import React from "react";
-import cerrar from "../images/Close.png";
+import closeIcon from "../images/Close.png";
 
-function ImagePopup({ title, link, key, isOpen, onClose }) {
-  //console.log(isOpen);
+function ImagePopup({ title, link, isOpen, onClose }) {
   return (
     <div className={`imgdisplay ${isOpen}`}>
       <div className="imgdisplay__container">
         <div className="imgdisplay__container-card">
-          <a href="#" className="imgdisplay__container-button">
+          <div className="imgdisplay__container-button">
             <img
-              alt="cerrar"
+              alt="closeIcon"
               className="imgdisplay__container-buttonimg"
-              src={cerrar}
+              src={closeIcon}
               onClick={onClose}
             />
-          </a>
+          </div>
           <img
             alt="Foto seleccionada"
             className="imgdisplay__image"

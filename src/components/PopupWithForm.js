@@ -4,14 +4,14 @@ function PopupWithForm({ name, title, children, isOpen, onClose }) {
     <>
       <div className={`popup popup_type_${name} ${isOpen}`} id="popup">
         <div className="popup__container">
-          <a href="#" className="popup__button">
+          <div className="popup__button">
             <img
               alt="cerrar"
               className="popup__buttonClose"
               src={cerrar}
               onClick={onClose}
             />
-          </a>
+          </div>
 
           <form className="form" name="register" id="form" noValidate>
             <h1 className="form__title">{title}</h1>
