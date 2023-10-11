@@ -4,6 +4,7 @@ import imgEdit from "../images/iconed.png";
 import React, { useEffect } from "react";
 import api from "../utils/api.js";
 import Card from "./Card";
+import CurrentUserContext from "../contexts/CurrentUserContext";
 
 function Main({
   onEditProfileClick,
@@ -11,6 +12,7 @@ function Main({
   onEditAvatarClick,
   onCardClick,
 }) {
+  const userContext = React.useContext(CurrentUserContext);
   const [userName, setUserName] = React.useState("");
   const [userDescription, setUserDescription] = React.useState("");
   const [userAvatar, setUserAvatar] = React.useState("");
@@ -22,13 +24,13 @@ function Main({
       setUserDescription(res.about);
       setUserAvatar(res.avatar);
     });
-  }, [onEditProfileClick, onAddPlaceClick, onEditAvatarClick]);
+  }, []);
 
   useEffect(() => {
     api.getCards().then((res) => {
       setCards(res);
     });
-  }, [onEditProfileClick, onAddPlaceClick, onEditAvatarClick]);
+  }, []);
 
   return (
     <main className="container">
@@ -37,7 +39,7 @@ function Main({
           <img
             alt="Imagen de perfil"
             className="profile__image"
-            src={userAvatar}
+            src={userContext.avatar}
           />
           <img
             alt="Icono editar"
@@ -49,8 +51,8 @@ function Main({
 
         <div className="profile__information">
           <div id="infoGroup">
-            <h1 className="profile__name">{userName}</h1>
-            <h2 className="profile__position">{userDescription}</h2>
+            <h1 className="profile__name">{userContext.name}</h1>
+            <h2 className="profile__position">{userContext.about}</h2>
           </div>
         </div>
         <div className="profile__buttonEdit">
