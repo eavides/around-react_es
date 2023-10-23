@@ -59,6 +59,13 @@ class Api {
     }
   }
 
+  async changeLikeCardStatus(id, hasLike) {
+    if (hasLike) {
+      return this.likeCard({}, id);
+    }
+    return this.unlikeCard({}, id);
+  }
+
   async likeCard(body, id) {
     try {
       return await this.fetcher(

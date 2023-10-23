@@ -1,8 +1,11 @@
 import cerrar from "../images/Close.png";
-function PopupWithForm({ name, title, children, isOpen, onClose }) {
+function PopupWithForm({ name, title, children, isOpen, onClose, onSubmit }) {
   return (
     <>
-      <div className={`popup popup_type_${name} ${isOpen}`} id="popup">
+      <div
+        className={`popup popup_type_${name} ${isOpen ? "popup_opened" : ""}`}
+        id="popup"
+      >
         <div className="popup__container">
           <div className="popup__button">
             <img
@@ -13,7 +16,13 @@ function PopupWithForm({ name, title, children, isOpen, onClose }) {
             />
           </div>
 
-          <form className="form" name="register" id="form" noValidate>
+          <form
+            className="form"
+            name="register"
+            id="form"
+            onSubmit={onSubmit}
+            noValidate
+          >
             <h1 className="form__title">{title}</h1>
             {children}
             <button type="submit" id="save-submit" className="form__submit">

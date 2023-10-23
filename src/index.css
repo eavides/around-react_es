@@ -22,6 +22,8 @@
 @import url(./blocks/grid/__card-like/grid__card-like.css);
 @import url(./blocks/grid/__card-label/grid__card-label.css);
 @import url(./blocks/grid/__card-delete/grid__card-delete.css);
+@import url(./blocks/grid/__card-delete/_hidden/grid__card-delete_hidden.css);
+@import url(./blocks/grid/__card-delete/_visible/grid__card-delete_visible.css);
 @import url(./blocks/grid/__card-count/grid__card-count.css);
 @import url(./blocks/footer/footer.css);
 @import url(./blocks/footer/__copyright/footer__copyright.css);

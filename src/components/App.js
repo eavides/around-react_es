@@ -1,11 +1,14 @@
-import PopupWithForm from "./PopupWithForm.js";
 import ImagePopup from "./ImagePopup.js";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
-import React from "react";
+import React, { useEffect } from "react";
 import api from "../utils/api.js";
 import CurrentUserContext from "../contexts/CurrentUserContext.js";
+import CardContext from "../contexts/CardContext.js";
+import EditProfilePopup from "./EditProfilePopup.js";
+import EditAvatarPopup from "./EditAvatarPopup.js";
+import AddPlacePopup from "./AddPlacePopup.js";
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
@@ -15,7 +18,38 @@ function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [selectedCard, setSelectedCard] = React.useState({});
   const [isImageOpen, setIsImageOpen] = React.useState(false);
-  const [currentUser, setCurrentUser] = React.useState(api.getUserInfo());
+  const [currentUser, setCurrentUser] = React.useState({});
+  const [cards, setCards] = React.useState([]);
+
+  useEffect(() => {
+    api.getCards().then((res) => {
+      setCards(res);
+    });
+  }, []);
+
+  useEffect(() => {
+    api.getUserInfo().then((res) => {
+      setCurrentUser(res);
+    });
+  }, []);
+
+  function handleCardLike(card) {
+    const isLiked = card.likes.some((i) => i._id === currentUser._id);
+    api.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
+      setCards((state) => state.map((c) => (c._id === card._id ? newCard : c)));
+    });
+  }
+  function handleCardDelete(card) {
+    api
+      .deleteCard({}, card._id)
+      .then(() => {
+        const newCards = cards.filter(
+          (currentCard) => currentCard._id !== card._id
+        );
+        setCards(newCards);
+      })
+      .catch((err) => console.log(err));
+  }
 
   function handleEditProfileClick() {
     setIsEditProfilePopupOpen(true);
@@ -40,98 +74,80 @@ function App() {
     setSelectedCard(card);
   }
 
+  function handleUpdateUser(userData) {
+    //setIsLoading(true);
+    api
+      .editProfileInfo(userData)
+      .then((res) => {
+        setCurrentUser(res);
+        closeAllPopups();
+      })
+      .catch((err) => console.log(err));
+    // .finally(() => setIsLoading(false));
+  }
+
+  function handleUpdateAvatar(dataAvatar) {
+    api
+      .updateImg(dataAvatar)
+      .then((res) => {
+        setCurrentUser(res);
+        closeAllPopups();
+      })
+      .catch((err) => console.log(err));
+  }
+
+  function handleAddPlaceSubmit(cardData) {
+    api
+      .addCard(cardData)
+      .then((newCard) => {
+        setCards([newCard, ...cards]);
+        closeAllPopups();
+      })
+      .catch((err) => console.log(err));
+  }
+
   return (
     <>
       <div className="page">
-        <CurrentUserContext.Provider value={currentUser}>
-          {console.log(currentUser)}
-          <Header />
-          <Main
-            onEditProfileClick={handleEditProfileClick}
-            onAddPlaceClick={handleAddPlaceClick}
-            onEditAvatarClick={handleEditAvatarClick}
-            onCardClick={handleCardClick}
-          />
-          <Footer />
+        <CardContext.Provider value={cards}>
+          <CurrentUserContext.Provider value={currentUser}>
+            <Header />
+            <Main
+              onEditProfileClick={handleEditProfileClick}
+              onAddPlaceClick={handleAddPlaceClick}
+              onEditAvatarClick={handleEditAvatarClick}
+              onCardClick={handleCardClick}
+              onCardLike={handleCardLike}
+              onCardDelete={handleCardDelete}
+            />
+            <Footer />
 
-          <PopupWithForm
-            name="profile"
-            title="Editar Perfil"
-            isOpen={isEditProfilePopupOpen ? "popup_opened" : ""}
-            onClose={closeAllPopups}
-          >
-            <input
-              type="text"
-              id="name-input"
-              name="name"
-              className="form__input form__format"
-              placeholder="Nombre"
-              minLength="2"
-              maxLength="40"
-              required
+            <EditProfilePopup
+              isOpen={isEditProfilePopupOpen}
+              onClose={closeAllPopups}
+              onUpdateUser={handleUpdateUser}
             />
 
-            <input
-              type="text"
-              id="position-input"
-              name="about"
-              className="form__input form__format"
-              placeholder="Profesion"
-              minLength="2"
-              maxLength="200"
-              required
+            <EditAvatarPopup
+              isOpen={isEditAvatarPopupOpen}
+              onClose={closeAllPopups}
+              onUpdateAvatar={handleUpdateAvatar}
             />
-          </PopupWithForm>
 
-          <PopupWithForm
-            name="newcard"
-            title="Nuevo Lugar"
-            isOpen={isAddPlacePopupOpen ? "newcard_opened" : ""}
-            onClose={closeAllPopups}
-          >
-            <input
-              type="text"
-              id="title-input"
-              name="name"
-              className="form__input form__format"
-              placeholder="Titulo"
-              minLength="2"
-              maxLength="30"
-              required
+            <AddPlacePopup
+              isOpen={isAddPlacePopupOpen}
+              onClose={closeAllPopups}
+              onAddPlace={handleAddPlaceSubmit}
             />
-            <input
-              type="url"
-              id="url-input"
-              name="link"
-              className="form__input form__format"
-              placeholder="Enlace de la Imagen"
-              required
-            />
-          </PopupWithForm>
 
-          <PopupWithForm
-            name="editimage"
-            title="Cambiar foto de perfil"
-            isOpen={isEditAvatarPopupOpen ? "editimage_opened" : ""}
-            onClose={closeAllPopups}
-          >
-            <input
-              type="url"
-              id="img-input"
-              name="link"
-              className="form__input form__format"
-              placeholder="Enlace de la Imagen"
-              required
-            />
-          </PopupWithForm>
-
-          <ImagePopup
-            link={selectedCard.link}
-            title={selectedCard.name}
-            isOpen={isImageOpen ? "imgdisplay_opened" : ""}
-            onClose={closeAllPopups}
-          ></ImagePopup>
-        </CurrentUserContext.Provider>
+            <ImagePopup
+              link={selectedCard.link}
+              title={selectedCard.name}
+              isOpen={isImageOpen ? "imgdisplay_opened" : ""}
+              onClose={closeAllPopups}
+            ></ImagePopup>
+          </CurrentUserContext.Provider>
+        </CardContext.Provider>
       </div>
     </>
   );

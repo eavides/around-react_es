@@ -1,36 +1,21 @@
 import edit from "../images/Edit.svg";
 import add from "../images/AddButton.svg";
 import imgEdit from "../images/iconed.png";
-import React, { useEffect } from "react";
-import api from "../utils/api.js";
+import React from "react";
 import Card from "./Card";
 import CurrentUserContext from "../contexts/CurrentUserContext";
+import CardContext from "../contexts/CardContext";
 
 function Main({
   onEditProfileClick,
   onAddPlaceClick,
   onEditAvatarClick,
   onCardClick,
+  onCardLike,
+  onCardDelete,
 }) {
   const userContext = React.useContext(CurrentUserContext);
-  const [userName, setUserName] = React.useState("");
-  const [userDescription, setUserDescription] = React.useState("");
-  const [userAvatar, setUserAvatar] = React.useState("");
-  const [cards, setCards] = React.useState([]);
-
-  useEffect(() => {
-    api.getUserInfo().then((res) => {
-      setUserName(res.name);
-      setUserDescription(res.about);
-      setUserAvatar(res.avatar);
-    });
-  }, []);
-
-  useEffect(() => {
-    api.getCards().then((res) => {
-      setCards(res);
-    });
-  }, []);
+  const cardContext = React.useContext(CardContext);
 
   return (
     <main className="container">
@@ -77,9 +62,15 @@ function Main({
       </section>
       <section className="grid">
         <div className="grid__container">
-          {cards.map((item) => {
+          {cardContext.map((item) => {
             return (
-              <Card key={item._id} card={item} onCardC={onCardClick}></Card>
+              <Card
+                key={item._id}
+                card={item}
+                onCardC={onCardClick}
+                onCardLike={onCardLike}
+                onCardDelete={onCardDelete}
+              ></Card>
             );
           })}
         </div>
