@@ -38,7 +38,6 @@ function Card({ card, onCardC, onCardLike, onCardDelete }) {
             <button
               className={cardLikeButtonClassName}
               onClick={handleLikeClick}
-              // onClick={handleUnLikeClick}
             ></button>
             <p className="grid__card-count">{card.likes.length || 0}</p>
           </div>

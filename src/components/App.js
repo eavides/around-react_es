@@ -33,6 +33,33 @@ function App() {
     });
   }, []);
 
+  useEffect(() => {
+    function handleOverlayClose(evt) {
+      if (evt.target.classList.contains("popup_opened")) {
+        closeAllPopups();
+      }
+      if (evt.target.classList.contains("imgdisplay_opened")) {
+        closeAllPopups();
+      }
+    }
+
+    function handleEscapeClose(evt) {
+      if (evt.key === "Escape") {
+        closeAllPopups();
+      }
+    }
+
+    if ([isEditProfilePopupOpen, isAddPlacePopupOpen, isEditAvatarPopupOpen]) {
+      document.addEventListener("mousedown", handleOverlayClose);
+      document.addEventListener("keydown", handleEscapeClose);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleOverlayClose);
+      document.removeEventListener("keydown", handleEscapeClose);
+    };
+  }, [isEditProfilePopupOpen, isAddPlacePopupOpen, isEditAvatarPopupOpen]);
+
   function handleCardLike(card) {
     const isLiked = card.likes.some((i) => i._id === currentUser._id);
     api.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
@@ -75,7 +102,6 @@ function App() {
   }
 
   function handleUpdateUser(userData) {
-    //setIsLoading(true);
     api
       .editProfileInfo(userData)
       .then((res) => {
@@ -83,7 +109,6 @@ function App() {
         closeAllPopups();
       })
       .catch((err) => console.log(err));
-    // .finally(() => setIsLoading(false));
   }
 
   function handleUpdateAvatar(dataAvatar) {
